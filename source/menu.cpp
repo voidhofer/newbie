@@ -102,11 +102,12 @@ menu_onButtonAB(MicroBitEvent) {
 
 void
 display_menu() {
+    exitMenu = false;
     while(1) {
         uBit.sleep(1);
         if (exitMenu) {
             exitMenu = false;
-            return;
+            break;
         }
         switch (menuItem) {
             case 0:
@@ -173,4 +174,5 @@ display_menu() {
                 break;
         }
     }
+    return;
 }
