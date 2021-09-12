@@ -22,11 +22,33 @@ int stats_bored = 0;
 
 bool menuOpened = false;
 
+int
+get_charge() {
+    return stats_charge;
+}
+
+void
+increase_charge() {
+    stats_charge = 4;
+}
+
+int
+get_mood() {
+    return stats_mood;
+}
+
+void
+increase_mood() {
+    if (stats_mood < 4) {
+        stats_mood++;
+    }
+}
+
 void
 onEvent(MicroBitEvent e) {
     if (!menuOpened) 
     {
-        if (e.value == 0)
+        if (e.value == 1)
         {
             // random chance to gain boredom point every hour
             int rn = rand() % 2; 
@@ -49,8 +71,28 @@ onEvent(MicroBitEvent e) {
                 }
             }
             
-        } else if (e.value == 1)
+        } else if (e.value == 2)
         {
+            // temperature based reactions
+            int temp = uBit.thermometer.getTemperature();
+            int rn3 = rand() % 20;
+            if (rn3 < 2) {
+                if (temp > 35) {
+                    // hot
+                    display_hot();
+                } else if (temp > 18) {
+                    // ideal
+                    if (rand() % 100 < 2) {
+                        stats_mood++;
+                    }
+                } else if (temp > 10) {
+                    // cold
+                    display_cold();
+                } else {
+                    // freezing cold
+                    display_freezing();
+                }
+            } 
             // chance for emotion events depending on mood
             if (stats_mood > 3)
             {
@@ -62,6 +104,7 @@ onEvent(MicroBitEvent e) {
                     uBit.sleep(500);
                     display_normal();
                     uBit.sleep(500);
+                    beep_happy();
                 }
                 
             }
@@ -70,6 +113,7 @@ onEvent(MicroBitEvent e) {
                 int rn2 = (rand() % 10);
                 if (rn2 < 2) {
                     display_smile();
+                    beep_happy();
                     uBit.sleep(1000);
                 }            
             }
@@ -77,6 +121,7 @@ onEvent(MicroBitEvent e) {
             {
                 int rn2 = (rand() % 10);
                 if (rn2 < 2) {
+                    beep_sad();
                     display_sad();
                     uBit.sleep(1000);
                 }            
@@ -91,6 +136,7 @@ onEvent(MicroBitEvent e) {
                     uBit.sleep(500);
                     display_cry();
                     uBit.sleep(1000);
+                    beep_sad();
                 }            
             }
             if (stats_mood > 1) {
@@ -121,10 +167,24 @@ onEvent(MicroBitEvent e) {
                 // random chance to angry mumbling
             }
         } 
-        else if (e.value == 2)
+        else if (e.value == 3)
         {
             // sec timer
         }
+    }
+}
+
+void detect_shake(MicroBitEvent) {
+    if (rand() % 4 < 3) {
+        display_shaken_happy();
+        beep_yes();
+        stats_mood++;
+        stats_bored=stats_bored-1;
+    } else {
+        beep_no();
+        display_shaken_sad();
+        stats_mood=stats_mood-1;
+        stats_bored=stats_bored-1;
     }
 }
 
@@ -135,6 +195,7 @@ timer() {
 
 void
 call_menu(MicroBitEvent) {
+    beep_short();
     if (!menuOpened) {
         menuOpened = true;
         display_menu();
@@ -152,12 +213,14 @@ main()
     DMESG("---- START ----\n");
 
     // main loop
+    beep_hello();
     create_fiber(timer);
     create_fiber(listen_newbie);
-    uBit.messageBus.listen(55005, 0, onEvent);
-    uBit.messageBus.listen(55005, 1, onEvent);
-    uBit.messageBus.listen(55005, 2, onEvent);
+    uBit.messageBus.listen(55005, 1, onEvent, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55005, 2, onEvent, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55005, 3, onEvent, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
     uBit.messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, call_menu);
+    uBit.messageBus.listen(MICROBIT_ID_GESTURE, MICROBIT_ACCELEROMETER_EVT_SHAKE, detect_shake);
     while (1) {
         display_mood(stats_mood);
         uBit.sleep(200);

@@ -1,5 +1,6 @@
 
 #include "MicroBit.h"
+#include "Tests.h"
 #include "ContinuousAudioStreamer.h"
 #include "DataStream.h"
 #include "MemorySource.h"
@@ -11,7 +12,6 @@
 #include "Synthesizer.h"
 #include "SoundEmojiSynthesizer.h"
 #include "SoundSynthesizerEffects.h"
-#include "Tests.h"
 #include "edge-impulse-sdk/classifier/ei_run_classifier.h"
 #include "edge-impulse-sdk/dsp/numpy.hpp"
 
@@ -41,8 +41,37 @@ static int microphone_audio_signal_get_data(size_t offset, size_t length, float 
     return 0;
 }
 
+void heard_keywords(MicroBitEvent e) {
+    switch (e.value) {
+        case 1:
+            display_wink();
+            beep_hello();
+            break;
+        case 2:
+            display_temperature();
+            break;
+        case 3:
+            display_heart();
+            break;
+        case 4:
+            play_dice();
+            break;
+        case 5:
+            play_coin();
+            break;
+        default:
+            break;
+    }
+}
+
+
 void
 listen_newbie() {
+    uBit.messageBus.listen(55500, 1, heard_keywords, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55500, 2, heard_keywords, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55500, 3, heard_keywords, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55500, 4, heard_keywords, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
+    uBit.messageBus.listen(55500, 5, heard_keywords, MESSAGE_BUS_LISTENER_DROP_IF_BUSY);
     if (mic == NULL){
         mic = uBit.adc.getChannel(uBit.io.microphone);
         mic->setGain(7,0);          // Uncomment for v1.47.2
@@ -89,8 +118,8 @@ listen_newbie() {
     uint8_t last_keywords = 0b0;
 
     int heard_keyword_x_ago = 5;
-    int lc = 0;
-    while(lc <= 10000) {
+
+    while(1) {
         uBit.sleep(1);
 
         if (inference.buf_ready) {
@@ -117,24 +146,22 @@ listen_newbie() {
                     ei_printf_float(result.classification[ix].value);
                     ei_printf("\n");
                     if (strcmp(result.classification[ix].label, INFERENCING_KEYWORD) == 0 && result.classification[ix].value > 0.6) {
-                        display_wink();
-                        say_hello();
+                        MicroBitEvent evt(55500, 1);
                     }
                     if (strcmp(result.classification[ix].label, INFERENCING_KEYWORD_HFV) == 0 && result.classification[ix].value > 0.6) {
-                        display_temperature();
+                        MicroBitEvent evt(55500, 2);
                     }
                     if (strcmp(result.classification[ix].label, INFERENCING_KEYWORD_SZ) == 0 && result.classification[ix].value > 0.6) {
-                        display_heart();
+                        MicroBitEvent evt(55500, 3);
                     }
                     if (strcmp(result.classification[ix].label, INFERENCING_KEYWORD_DK) == 0 && result.classification[ix].value > 0.6) {
-                        play_dice();
+                        MicroBitEvent evt(55500, 4);
                     }
                     if (strcmp(result.classification[ix].label, INFERENCING_KEYWORD_JTSZ) == 0 && result.classification[ix].value > 0.6) {
-                        play_coin();
+                        MicroBitEvent evt(55500, 5);
                     }
                 }
             }
         }
-        lc++;
     }
 }

@@ -8,12 +8,12 @@ timer_loop() {
         loopcount++;
         uBit.sleep(1000);
         uBit.serial.send(loopcount);
-        MicroBitEvent evt(55005, 2);
+        MicroBitEvent evt(55005, 3);
         if (loopcount % 60 == 0) {
-            MicroBitEvent evt(55005, 1);
+            MicroBitEvent evt(55005, 2);
         }
         if (loopcount % 3600 == 0) {
-            MicroBitEvent evt(55005, 0);
+            MicroBitEvent evt(55005, 1);
         }
     }
 }

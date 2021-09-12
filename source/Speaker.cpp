@@ -628,8 +628,8 @@ synthesizer_test()
     normalizer->setOrMask(0x8000);
 
     speaker->setDecoderMode(PWM_DECODER_LOAD_Common);
-    speaker->connectPin(uBit.io.speaker, 0);
-    speaker->connectPin(uBit.io.P0, 1);
+    speaker->connectPin(uBit.io.speaker, 1);
+    speaker->connectPin(uBit.io.P0, 0);
 
     synth->setTone(Synthesizer::SquareWaveTone);
    
@@ -644,7 +644,7 @@ synthesizer_test()
     //sampleSource->play(middleC, sizeof(middleC), 130);
     //sampleSource->play(middleD, sizeof(middleD), 150);
     //sampleSource->play(middleE, sizeof(middleE), 165);
-
+    return;
 }
 
 void
@@ -667,7 +667,7 @@ sound_emoji_test()
 
     speaker->setDecoderMode(PWM_DECODER_LOAD_Common);
     speaker->connectPin(uBit.io.P0, 0);
-    //speaker->connectPin(uBit.io.speaker, 1);
+    speaker->connectPin(uBit.io.speaker, 1);
 
     uBit.io.speaker.setHighDrive(true);
 
@@ -1078,7 +1078,107 @@ speaker_test2(int plays)
 
     uBit.io.speaker.setAnalogValue(0);
 
-    DMESG("SPEAKER TEST2: EXITING...");
+
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_hello()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1911);
+    uBit.sleep(400);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_yes()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_no()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1911);
+    uBit.sleep(500);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_short()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(100);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+void
+beep_long()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(1000);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_sad()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1617);
+    uBit.sleep(400);
+    uBit.io.speaker.setAnalogPeriodUs(1717);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1817);
+    uBit.sleep(600);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
+}
+
+void
+beep_happy()
+{
+    // Disable RUN_MIC
+    uBit.io.runmic.setDigitalValue(0);
+    uBit.io.speaker.setAnalogValue(512);
+    uBit.io.speaker.setAnalogPeriodUs(1617);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1617);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1617);
+    uBit.sleep(200);
+    uBit.io.speaker.setAnalogPeriodUs(1517);
+    uBit.sleep(600);
+    uBit.io.speaker.setAnalogValue(0);
+    uBit.io.runmic.setDigitalValue(1);
 }
 
 static void

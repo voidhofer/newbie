@@ -164,6 +164,62 @@ const char * const menu_emoji ="\
     000,000,000,000,000\n\
     000,000,000,000,000\n";
 
+const char * const charge_empty_emoji ="\
+    000,000,255,000,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n";
+
+const char * const charge_low_emoji ="\
+    000,000,255,000,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n\
+    000,255,255,255,000\n";
+
+const char * const charge_medium_emoji ="\
+    000,000,255,000,000\n\
+    000,255,000,255,000\n\
+    000,255,000,255,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n";
+
+const char * const charge_high_emoji ="\
+    000,000,255,000,000\n\
+    000,255,000,255,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n";
+
+const char * const charge_full_emoji ="\
+    000,000,255,000,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n\
+    000,255,255,255,000\n";
+
+const char * const hot_emoji ="\
+    255,255,000,255,255\n\
+    255,255,000,255,255\n\
+    000,000,000,000,000\n\
+    000,255,255,255,000\n\
+    000,000,000,255,000\n";
+
+const char * const cold_emoji ="\
+    255,255,000,255,255\n\
+    255,255,000,255,255\n\
+    000,000,000,000,000\n\
+    000,255,000,255,000\n\
+    255,000,255,000,255\n";
+
+const char * const freeze_emoji ="\
+    000,000,000,000,000\n\
+    255,255,000,255,255\n\
+    000,000,000,000,000\n\
+    000,000,255,000,000\n\
+    000,000,000,000,000\n";
+
 Image tick(tick_emoji);
 Image cross(cross_emoji);
 Image sensor(sensor_emoji);
@@ -187,10 +243,73 @@ Image cry(cry_emoji);
 Image smile(smile_emoji);
 Image laugh(laugh_emoji);
 Image menu(menu_emoji);
+Image hot(hot_emoji);
+Image cold(cold_emoji);
+Image freezing(freeze_emoji);
+Image charge_empty(charge_empty_emoji);
+Image charge_low(charge_low_emoji);
+Image charge_middle(charge_medium_emoji);
+Image charge_high(charge_high_emoji);
+Image charge_full(charge_full_emoji);
+
+void
+display_charge_empty() {
+    uBit.display.print(charge_empty);
+}
+
+void
+display_charge_low() {
+    uBit.display.print(charge_low);
+}
+
+void
+display_charge_middle() {
+    uBit.display.print(charge_middle);
+}
+
+void
+display_charge_high() {
+    uBit.display.print(charge_high);
+}
+
+void
+display_charge_full() {
+    uBit.display.print(charge_full);
+}
 
 void
 clear_display() {
     uBit.display.clear();
+}
+
+void display_hot() {
+    uBit.display.print(hot);
+    uBit.sleep(1000);
+    display_mood(get_mood());
+}
+
+void display_cold() {
+    uBit.display.print(cold);
+    uBit.sleep(1000);
+    display_mood(get_mood());
+}
+
+void display_freezing() {
+    uBit.display.print(freezing);
+    uBit.sleep(1000);
+    display_mood(get_mood());
+}
+
+void display_shaken_happy() {
+    display_laugh();
+    uBit.sleep(1000);
+    display_mood(get_mood());
+}
+
+void display_shaken_sad() {
+    display_cry();
+    uBit.sleep(1000);
+    display_mood(get_mood());
 }
 
 void
@@ -339,7 +458,6 @@ display_wink()
     uBit.display.print(wink);
     uBit.sleep(500);
     uBit.display.print(normal);
-    uBit.sleep(1000);
 }
 
 void
